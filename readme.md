@@ -1,25 +1,63 @@
-## Laravel PHP Framework
+## Laravel multilingual site example
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/downloads.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+In this repository you will find a little example on how to do multilingual sites that can be accessed by changing the language segment in the url, defining supported languages and a fallback when one is not available. 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, and caching.
+This is just based on the url you use to access your site, any other type of language detection is left out of this example. Knowing this, if you want to access the French version of your site the url goes from http://site.com/ to http://site.com/fr.
 
-Laravel aims to make the development process a pleasing one for the developer without sacrificing application functionality. Happy developers make the best code. To this end, we've attempted to combine the very best of what we have seen in other web frameworks, including frameworks implemented in other languages, such as Ruby on Rails, ASP.NET MVC, and Sinatra.
+The base for this example was taken from [Marcin Nabiałek](http://stackoverflow.com/users/3593996/marcin-nabia%C5%82ek) in [this](http://stackoverflow.com/questions/25082154/how-to-create-multilingual-translated-routes-in-laravel) Stack Overflow question.
 
-Laravel is accessible, yet powerful, providing powerful tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+### Dealing with routes
 
-## Official Documentation
+In order to have different locales in the URL you need to group the routes following these steps:
 
-Documentation for the entire framework can be found on the [Laravel website](http://laravel.com/docs).
+- Open **app/config/app.php** and add an array of the available languages.
 
-### Contributing To Laravel
+```php
+/**
+ * List of alternative languages (not including the one specified as 'locale')
+ */
+'alt_langs' => array ('en', 'fr', 'es'),
 
-**All issues and pull requests should be filed on the [laravel/framework](http://github.com/laravel/framework) repository.**
 
-### License
+/**
+ *  Prefix of selected locale  - leave empty (set in runtime)
+ */
+'locale_prefix' => '',
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+``` 
+
+- On **app/routes.php** define locale and group routes.
+
+```php
+
+/*
+ *  Set up locale and locale_prefix if other language is selected
+ */
+if (in_array(Request::segment(1), Config::get('app.alt_langs'))) {
+
+    App::setLocale(Request::segment(1));
+    Config::set('app.locale_prefix', Request::segment(1));
+}
+
+// group routes according to locale
+Route::group(array('prefix' => Config::get('app.locale_prefix')), function()
+{
+    Route::get(
+        '/',
+        function () {
+            return "main page - ".App::getLocale();
+        }
+    );
+
+
+    Route::get(
+        '/laravel/',
+        function () {
+            return "contact page ".App::getLocale();
+        }
+    );
+
+});
+
+``` 
+
