@@ -76,3 +76,6 @@ App::missing(function()
 
 Laravel offers [localization utilities](http://laravel.com/docs/4.2/localization) for strings, following the documentation will work without issues with this example. Three locales are implemented so give them a look.
 
+### TO DO
+
+- Upload live demo.
