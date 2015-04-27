@@ -1,8 +1,8 @@
 ## Laravel multilingual site example
 
-In this repository you will find a little example on how to do multilingual sites that can be accessed by changing the language segment in the url, defining supported languages and a fallback when one is not available. 
+In this repository you will find a little example on how to do multilingual sites that can be accessed by changing the language segment in the URL, defining supported languages and a fallback when one is not available. 
 
-This is just based on the url you use to access your site, any other type of language detection is left out of this example. Knowing this, if you want to access the French version of your site the url goes from http://site.com/ to http://site.com/fr.
+This is just based on the URL you use to access your site, any other type of language detection is left out of this example. Knowing this, if you want to access the French version of your site the URL goes from http://site.com/ to http://site.com/fr.
 
 The base for this example was taken from [Marcin Nabiałek](http://stackoverflow.com/users/3593996/marcin-nabia%C5%82ek) in [this](http://stackoverflow.com/questions/25082154/how-to-create-multilingual-translated-routes-in-laravel) Stack Overflow question.
 
@@ -45,19 +45,34 @@ Route::group(array('prefix' => Config::get('app.locale_prefix')), function()
     Route::get(
         '/',
         function () {
-            return "main page - ".App::getLocale();
+			return View::make('hello');
         }
     );
 
 
     Route::get(
-        '/laravel/',
+        '/about/',
         function () {
-            return "contact page ".App::getLocale();
+			return View::make('about');
         }
     );
 
 });
 
 ``` 
+
+- On **app/start/global.php** manage redirection for unknown routes. Add the following so an unknown route goes back to /[your_locale_here] instead of /
+
+```php
+
+App::missing(function()
+{
+   return Redirect::to(Config::get('app.locale_prefix'),301);
+});
+
+```
+
+### String localization
+
+Laravel offers [localization utilities](http://laravel.com/docs/4.2/localization) for strings, following the documentation will work without issues with this example. Three locales are implemented so give them a look.
 

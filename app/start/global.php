@@ -67,6 +67,12 @@ App::down(function()
 	return Response::make("Be right back!", 503);
 });
 
+
+App::missing(function()
+{
+   return Redirect::to(Config::get('app.locale_prefix'),301);
+});
+
 /*
 |--------------------------------------------------------------------------
 | Require The Filters File

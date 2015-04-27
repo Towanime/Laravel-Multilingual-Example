@@ -35,7 +35,7 @@ Route::group(array('prefix' => Config::get('app.locale_prefix')), function()
     Route::get(
         '/about/',
         function () {
-            return "contact page ".App::getLocale();
+			return View::make('about');
         }
     );
 
